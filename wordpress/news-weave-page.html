@@ -1,0 +1,84 @@
+<!-- wp:paragraph -->
+<p>「ニュースを編む」では、IoT・電子工作などの技術分野について、公式発表などの一次情報をもとに作成した比較記事を掲載する。同じ用途や分野の製品・サービスを取り上げ、機能、仕様、使い方、提供条件などの共通点と相違点を整理する。記事の作成にはAIを使用し、確認できた事実と出典に基づいて本文と比較表を作成する。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">記事の作成方法</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>一次情報の収集</strong> 登録した情報源の公開資料を収集する。取得元の利用条件やアクセス方針を確認し、ログインが必要な情報や非公開情報は収集対象にしない。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>事実と根拠の確認</strong> 製品名、仕様、価格、提供条件などを資料の記載と照合する。資料で確認できない数値や機能は、推測で補わない。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>比較記事と比較表の作成</strong> 用途や比較条件が合う複数の資料をもとに、製品・サービスの共通点と相違点がわかる比較記事を作成する。本文では比較の観点や条件を説明し、比較表では確認できた情報を項目ごとに整理する。表の「資料1」「資料2」などの番号は、記事末尾の出典URLと対応する。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>検証と公開前の確認</strong> 執筆とは別の工程で、事実の裏付け、出典リンク、比較条件、文体などを検証し、WordPressに下書き保存する。公開前には、担当者が内容と権利上の条件を確認する。各記事の末尾付近に「使用したAIモデル」を設け、記録がある工程のモデル名を示す。モデル名の記録がない場合は、その旨を明記する。</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">著作権・正確性などへの配慮</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>文章の転載を避ける</strong> 発表資料の全文や長い文章をそのまま転載せず、確認した事実を独自の文章で整理する。必要な引用は範囲を絞り、出典を明示する。出典表示に加え、資料ごとの利用条件や必要な許諾にも注意する。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>画像やロゴを無断で転載しない</strong> 提供元の写真、図表、ロゴなどを無断で転載しない。アイキャッチには記事のテーマを表すAI生成のイメージイラストを用い、実際の製品写真とは区別する。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>発表内容と評価を区別する</strong> メーカー側の説明は、その提供元の発表として記載する。共同検証と商用提供、補助適用後の料金と一般料金を区別し、条件が異なる情報から性能や価格の優劣を推定しない。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>未確認情報を断定しない</strong> 比較表の「資料で確認できず」は、採用した資料で裏付けを確認できないことを示す。機能の非対応や製品の劣位を意味するものではない。</li>
+<!-- /wp:list-item -->
+<!-- wp:list-item -->
+<li><strong>不要な個人情報を掲載しない</strong> 連絡先など、記事の説明に不要な個人情報を本文へ含めない。</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>掲載内容は参照した資料の発表時点と記載範囲に基づく。販売状況、価格、提供条件などの最新情報は、各記事に示す出典で確認してほしい。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">記事一覧</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>公開した記事を新着順に掲載する。タイトルまたは「記事を読む」から、本文・比較表・出典を確認できる。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:query {"queryId":1,"query":{"perPage":6,"pages":0,"offset":0,"postType":"news_weave","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false},"layout":{"type":"default"}} -->
+<div class="wp-block-query">
+<!-- wp:post-template -->
+<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"16/9","sizeSlug":"medium_large"} /-->
+<!-- wp:post-title {"level":3,"isLink":true} /-->
+<!-- wp:post-date {"format":"Y年n月j日"} /-->
+<!-- wp:post-excerpt {"moreText":"記事を読む","showMoreOnNewLine":true,"excerptLength":55} /-->
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+<!-- /wp:post-template -->
+<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"center"}} -->
+<!-- wp:query-pagination-previous {"label":"前のページ"} /-->
+<!-- wp:query-pagination-numbers /-->
+<!-- wp:query-pagination-next {"label":"次のページ"} /-->
+<!-- /wp:query-pagination -->
+<!-- wp:query-no-results -->
+<!-- wp:paragraph -->
+<p>公開済みの記事はまだない。記事が公開されると、ここに新着順で表示される。</p>
+<!-- /wp:paragraph -->
+<!-- /wp:query-no-results -->
+</div>
+<!-- /wp:query -->

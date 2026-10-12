@@ -1,0 +1,7 @@
+services:
+  uploader:
+    environment:
+      WPUPLOADER_TRANSFER_DIR: /handoff
+    volumes:
+      - ${DRAFT_TRANSFER_HOST:?set shared host directory}/ready:/handoff/ready:ro
+      - ${DRAFT_TRANSFER_HOST:?set shared host directory}/receipts:/handoff/receipts

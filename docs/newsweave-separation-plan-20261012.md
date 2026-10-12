@@ -1,7 +1,8 @@
 # NewsWeave / WPuploader 機能分離の設計と実施計画
 
 作成日・更新日: 2026-10-12（日本時間）  
-状態: 設計案。今回は調査と計画書作成のみ。実行コード・稼働設定・既存投稿は変更していない。  
+状態: 独立アップローダーと生成側成果物出力を実装済み。稼働設定・既存投稿への適用は未実施。
+実装済みの起動手順・初版の範囲は [実装手順](../../newsWeave/docs/independent-apps-implementation.md) を参照。
 対象: V:\codex\newsWeave と V:\codex\WPuploader。依頼文の NewWeave は現行 News Weave を指すものとして扱う。
 
 ## 1. 採用案と独立動作の条件
@@ -78,7 +79,7 @@ V:\codex\
     archive\                         # 確認後の手動保管用
 ~~~
 
-- 今回 V: は UNC \\TRUENAS\dev 上のフォルダーに解決される。コード・ZIP は NAS に置けるが、SQLite / WAL / worker lock は NAS に置かない。
+- 今回 V: は UNC \\TRUENAS\dev 上のフォルダーに解決される。コード・ZIP は NAS に置けるが、SQLite / journal / worker lock は NAS に置かない。
 - Windows の状態保存例は %LOCALAPPDATA%\WPuploader\<instance_id>\state.sqlite3、cache\、worker.lock。Docker は実体がローカルディスクの永続 volume または bind mount。SMB/NFS volume は使わない。
 - NewsWeave は自分の DB と永続 artifact 領域に完成原稿・export 待ちを保存し、共有側の消失から再出力できるようにする。生成コンテナーに永続保存先を追加する。
 - staging/ready の書き手は NewsWeave、読者は WPuploader。receipts は逆。相手のファイルを編集・削除しない。
@@ -171,7 +172,7 @@ NAS の rename が完全に原子的・永続的であるとは無条件に仮�
 | events | event_id UNIQUE、attempt、状態遷移、通知 JSON、receipt 配信済み flag |
 | meta | schema version、instance ID、target 設定 fingerprint、移行情報 |
 
-foreign_keys=ON、journal_mode=WAL、synchronous=FULL、busy_timeout=5000 を基本とする。runtime の SQLite は WAL 修正版（3.51.3 以降、または公式修正 backport）を確認する。[SQLite WAL 修正情報](https://www.sqlite.org/wal.html)
+実装は foreign_keys=ON、journal_mode=DELETE、synchronous=FULL、busy_timeout=5000 を使用する。古い標準 sqlite3 runtime の WAL reset 不具合を避けるため、初版は rollback journal を採用した。remote 操作は OS lock で直列化し、短い transaction を使用する。[SQLite journal の仕様](https://www.sqlite.org/lockingv3.html)
 
 取り込み・予約は短い BEGIN IMMEDIATE と UNIQUE 制約で行う。HTTP 中に DB transaction を保持しない。busy は jitter 付き有限回 retry、解消しなければその巡回を一時終了して次回へ。schema migration は worker 停止・backup・排他取得後に実行する。
 
@@ -275,7 +276,7 @@ receipt は任意通知。投稿管理の正本は uploader SQLite とする。s
 
 watcher は補助とし、周期的全件走査を必須にする。cursor や更新日時だけで永久に落とさない。大量 file は段階的全件巡回を行う。blocked/uncertain が先頭を占有しないよう次回日時と一巡処理上限を設ける。
 
-通常の SQLite crash は WAL recovery で回復する。物理破損・状態ディスク喪失は反復起動だけでは直らないため、SQLite backup API による整合 backup と cache/events を保持する。稼働 DB 単体の生コピーは行わない。
+通常の SQLite crash は rollback journal recovery で回復する。物理破損・状態ディスク喪失は反復起動だけでは直らないため、SQLite backup API による整合 backup と cache/events を保持する。稼働 DB 単体の生コピーは行わない。
 
 既存 instance の DB が消失しても空 DB を自動作成して全件 POST しない。backup 復元または明示 recover を使い、復元行を含む書き込み候補を照合専用で再確認する。backup が prepared まで巻き戻っている可能性も考慮する。receipt 不在を未送信の証拠にしない。新規導入は init --new-install 後に取り込みを始める。
 
@@ -288,7 +289,7 @@ watcher は補助とし、周期的全件走査を必須にする。cursor や�
 | NewsWeave | AI、収集、比較、review、画像、生成 DB の設定を残す。DRAFT_ARTIFACT_DIR、任意 DRAFT_TRANSFER_DIR、DRAFT_EXPORT_ENABLED、永続 DRAFT_PRODUCER_ID を追加。不足資料収集は FETCH_MISSING_SOURCES=false を既定とする |
 | NewsWeave CLI | drafts export <draft_id> --output <file>、drafts export-pending、drafts preview <draft_id> |
 | WPuploader | WPUPLOADER_STATE_DIR、任意 WPUPLOADER_TRANSFER_DIR、WORDPRESS_* 接続・認証・分類 map、review 強制設定 |
-| WPuploader CLI | init --new-install、import <file>、run-once、watch、status、reconcile、retry-blocked、recover |
+| WPuploader CLI | init --new-install、import <file>、run-once、watch、status、reconcile、resolve、replace、backup、recover |
 | 明示復旧 | resolve <key> --adopt-post-id <id>、resolve <key> --confirmed-not-created、replace <package_id> --expected-remote-hash <hash>。対象・照合結果を表示し監査記録を残す |
 | dry-run | bundle 検査、payload preview、読み取り照合まで。post/media write はゼロ |
 

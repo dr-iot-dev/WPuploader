@@ -1,0 +1,13 @@
+name: wp-uploader
+services:
+  uploader:
+    build: .
+    env_file: .env
+    environment:
+      WPUPLOADER_STATE_DIR: /data
+    volumes:
+      - uploader-state:/data
+    restart: unless-stopped
+volumes:
+  uploader-state:
+    driver: local
